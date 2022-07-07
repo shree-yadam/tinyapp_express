@@ -7,6 +7,8 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+app.set("view engin", "ejs");
+
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
