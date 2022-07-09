@@ -8,6 +8,34 @@ const urlDatabase = {
 };
 
 app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
+
+//Function to generate a random string of input length to be used as shortURL
+const generateRandomString = function(length) {
+  const characters = 'ABCDEFGHIKJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = "";
+  const range = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * range));
+  }
+  return result;
+};
+
+app.get("/u/:shortURL", (req, res) => {
+  const shortURL = req.params.shortURL;
+  console.log("Received redirect");
+  if(!urlDatabase[shortURL]) {
+    console.log("Not Found");
+    res.status(404).send("NOT FOUND");
+    return;
+  }
+  const longURL = urlDatabase[shortURL];
+  res.redirect(longURL);
+});
+
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
 
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
@@ -24,6 +52,16 @@ app.get("/urls", (req, res) => {
 
 app.get("/", (req,res) => {
   res.send("Hello!");
+});
+
+app.post("/urls", (req, res) => {
+  let longURL = req.body.longURL;
+  if(!longURL.startsWith("http://") && !longURL.startsWith("https://")){
+    longURL = "http://" + longURL;
+  }
+  const shortURL = generateRandomString(6);
+  urlDatabase[shortURL] = longURL;
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.listen(PORT, () => {
