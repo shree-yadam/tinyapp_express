@@ -23,9 +23,7 @@ const generateRandomString = function(length) {
 
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  console.log("Received redirect");
   if(!urlDatabase[shortURL]) {
-    console.log("Not Found");
     res.status(404).send("NOT FOUND");
     return;
   }
